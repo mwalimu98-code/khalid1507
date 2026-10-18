@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0f172a">
+  <title>منصة المتابعة الصفية لمادة الجغرافية والتقنيات الحديثة - أ. خالد البلوشي</title>
+  <!-- خط كايرو الاحترافي -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <!-- مكتبة SheetJS لقراءة وتصدير ملفات Excel -->
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+  <!-- مكتبة الاحتفال التفاعلي Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    :root {
+      --primary: #0f172a;
+      --accent: #0284c7;
+      --accent-hover: #0369a1;
+      --gold: #f59e0b;
+      --gold-light: #fef3c7;
+      --pos: #16a34a;
+      --pos-bg: #dcfce7;
+      --neg: #dc2626;
+      --neg-bg: #fee2e2;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --row-even: #f8fafc;
+      --row-hover: #e0f2fe;
+      --col-equal-width: 195px;
+    }
+    body.dark-mode {
+      --primary: #1e293b;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --border: #334155;
+      --row-even: #162032;
+      --row-hover: #1e3a8a;
+      --pos-bg: rgba(22, 163, 74, 0.22);
+      --neg-bg: rgba(220, 38, 38, 0.22);
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+      background: var(--bg);
+      margin: 0;
+      padding: 14px 18px 80px 18px;
+      color: var(--text);
+      transition: background 0.25s, color 0.25s;
+    }
+
+    /* الهيدر الاحترافي */
+    .hero-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #0284c7 100%);
+      color: #fff;
+      padding: 16px 22px;
+      border-radius: 18px;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.2);
+      margin-bottom: 12px;
+    }
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .globe-badge {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      border: 1px solid rgba(255,255,255,0.25);
+      flex-shrink: 0;
+    }
+    .brand-text h1 {
+      margin: 0;
+      font-size: 19px;
+      font-weight: 800;
+    }
+    .brand-text .credits-sub {
+      margin-top: 3px;
+      font-size: 12.5px;
+      color: #bae6fd;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .insta-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      color: #fff;
+      padding: 2px 10px;
+      border-radius: 20px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 11.5px;
+      direction: ltr;
+    }
+    .header-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+    .btn {
+      font-family: 'Cairo', sans-serif;
+      padding: 7px 13px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 12.5px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+    }
+    .btn:active { transform: scale(0.96); }
+    .btn-roulette { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; }
+    .btn-upload { background: #10b981; color: #fff; }
+    .btn-export { background: #3b82f6; color: #fff; }
+    .btn-glass {
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.25);
+    }
+    input[type="file"] { display: none; }
+
+    /* مفتاح التبديل بين وضع السبورة (الجدول) ووضع الهاتف (بطاقات اليوم الواحد) */
+    .view-switcher-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      background: var(--card);
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+    .mode-toggle-group {
+      display: flex;
+      background: var(--row-even);
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      gap: 4px;
+    }
+    .mode-btn {
+      font-family: 'Cairo', sans-serif;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 12.5px;
+      cursor: pointer;
+    }
+    .mode-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* شريط اختيار اليوم السريع في وضع الهاتف */
+    .mobile-day-selector {
+      display: none;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 4px 2px;
+      margin-bottom: 12px;
+      scrollbar-width: none;
+    }
+    .mobile-day-selector::-webkit-scrollbar { display: none; }
+    .day-tab-btn {
+      flex: 1;
+      min-width: 68px;
+      font-family: 'Cairo', sans-serif;
+      padding: 9px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      font-weight: 800;
+      font-size: 13.5px;
+      cursor: pointer;
+      text-align: center;
+      transition: 0.15s;
+    }
+    .day-tab-btn.active {
+      background: linear-gradient(135deg, #1e3a8a, #0284c7);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.28);
+    }
+
+    /* دليل السلوكيات */
+    .legend-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      background: var(--card);
+      padding: 9px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+      font-size: 12px;
+    }
+    .legend-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 8px;
+      font-weight: 700;
+    }
+    .legend-pos { background: var(--pos-bg); color: var(--pos); border: 1px solid rgba(22,163,74,0.25); }
+    .legend-neg { background: var(--neg-bg); color: var(--neg); border: 1px solid rgba(220,38,38,0.25); }
+
+    /* لوحة الشرف وبطاقات الإحصاء */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .podium-card, .kpi-card {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+    }
+    .section-title {
+      font-size: 13.5px;
+      font-weight: 800;
+      margin: 0 0 8px 0;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .podium-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .podium-item {
+      background: var(--row-even);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 6px;
+      text-align: center;
+    }
+    .podium-rank { font-size: 19px; display: block; }
+    .podium-name { font-weight: 800; font-size: 12.5px; margin: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .podium-score { font-size: 11.5px; font-weight: 700; color: var(--pos); }
+    .cert-mini-btn {
+      margin-top: 4px;
+      background: var(--gold-light);
+      color: #92400e;
+      border: 1px solid #f59e0b;
+      border-radius: 6px;
+      padding: 2px 6px;
+      font-size: 10.5px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .kpi-box {
+      background: var(--row-even);
+      border-radius: 10px;
+      padding: 8px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    .kpi-box .val { font-size: 19px; font-weight: 800; display: block; }
+    .kpi-box .lbl { font-size: 11px; color: var(--muted); font-weight: 600; }
+
+    /* شريط الفصول والبحث والترتيب */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      background: var(--card);
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+    .tabs {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      max-width: 100%;
+      padding-bottom: 2px;
+    }
+    .tab-btn {
+      font-family: 'Cairo', sans-serif;
+      padding: 7px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--row-even);
+      color: var(--text);
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 13px;
+      white-space: nowrap;
+      transition: 0.2s;
+    }
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      box-shadow: 0 3px 10px rgba(2, 132, 199, 0.3);
+    }
+    .filter-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      width: 100%;
+      justify-content: flex-end;
+    }
+    .filter-tools input, .filter-tools select {
+      font-family: 'Cairo', sans-serif;
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--row-even);
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    /* وضع السبورة/الكمبيوتر */
+    .table-wrapper {
+      overflow: auto;
+      max-height: 64vh;
+      background: var(--card);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      border: 1px solid var(--border);
+      position: relative;
+      -webkit-overflow-scrolling: touch;
+    }
+    table {
+      width: max-content;
+      min-width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      table-layout: fixed;
+    }
+    th, td {
+      padding: 8px 6px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      border-left: 1px solid var(--border);
+      background: var(--card);
+    }
+    tbody tr:nth-child(even) td { background: var(--row-even); }
+    tbody tr:hover td { background: var(--row-hover); }
+
+    thead th {
+      background: var(--row-even);
+      font-weight: 800;
+      color: var(--text);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 2px solid var(--border);
+      font-size: 13.5px;
+    }
+    .sticky-index {
+      position: sticky;
+      right: 0;
+      width: 42px;
+      min-width: 42px;
+      max-width: 42px;
+      z-index: 15;
+      background: var(--card);
+      font-weight: 700;
+    }
+    .student-name {
+      position: sticky;
+      right: 42px;
+      width: var(--col-equal-width);
+      min-width: var(--col-equal-width);
+      max-width: var(--col-equal-width);
+      text-align: right;
+      font-weight: 700;
+      padding: 8px 10px;
+      z-index: 15;
+      background: var(--card);
+      border-left: 2px solid var(--accent);
+      box-shadow: -4px 0 10px -2px rgba(15, 23, 42, 0.1);
+      vertical-align: middle;
+    }
+    .day-cell, thead th.day-header {
+      width: var(--col-equal-width);
+      min-width: var(--col-equal-width);
+      max-width: var(--col-equal-width);
+      vertical-align: top;
+    }
+    .stat-col {
+      width: 76px;
+      min-width: 76px;
+      max-width: 76px;
+    }
+
+    tbody tr:nth-child(even) td.sticky-index,
+    tbody tr:nth-child(even) td.student-name { background: var(--row-even); }
+    tbody tr:hover td.sticky-index,
+    tbody tr:hover td.student-name { background: var(--row-hover); }
+    thead th.sticky-index, thead th.student-name {
+      z-index: 30;
+      background: var(--row-even);
+    }
+
+    .student-name-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .student-top-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 4px;
+    }
+    .student-title {
+      font-size: 13.5px;
+      line-height: 1.3;
+      word-break: break-word;
+    }
+    .rank-tag {
+      font-size: 10.5px;
+      padding: 1px 6px;
+      border-radius: 10px;
+      display: inline-block;
+      font-weight: 700;
+      width: fit-content;
+    }
+    .rank-gold { background: #fef3c7; color: #92400e; }
+    .rank-silver { background: #e0f2fe; color: #0369a1; }
+
+    .icons-log {
+      min-height: 36px;
+      margin-bottom: 6px;
+      background: var(--row-even);
+      border-radius: 8px;
+      padding: 4px;
+      cursor: pointer;
+      user-select: none;
+      border: 1px dashed var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+      justify-content: center;
+      align-items: center;
+    }
+    .log-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+    .log-chip.pos { background: var(--pos-bg); color: var(--pos); }
+    .log-chip.neg { background: var(--neg-bg); color: var(--neg); }
+
+    .action-btns {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+    }
+    .beh-btn {
+      font-family: 'Cairo', sans-serif;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      cursor: pointer;
+      border-radius: 6px;
+      padding: 3px 4px;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      transition: all 0.12s;
+      white-space: nowrap;
+    }
+    .beh-btn.pos-b:hover, .beh-btn.pos-b:active {
+      background: var(--pos-bg);
+      color: var(--pos);
+      border-color: var(--pos);
+    }
+    .beh-btn.neg-b:hover, .beh-btn.neg-b:active {
+      background: var(--neg-bg);
+      color: var(--neg);
+      border-color: var(--neg);
+    }
+
+    .score-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 800;
+      font-size: 13px;
+    }
+    .score-pos { background: var(--pos-bg); color: var(--pos); }
+    .score-neg { background: var(--neg-bg); color: var(--neg); }
+    .score-zero { background: var(--row-even); color: var(--muted); }
+
+    .row-actions {
+      display: inline-flex;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 2px;
+      opacity: 0.8;
+    }
+
+    /* وضع الهاتف الذكي */
+    .mobile-cards-container {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .m-student-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px 14px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.04);
+    }
+    .m-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .m-name-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 15px;
+    }
+    .m-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      background: var(--row-even);
+      color: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12.5px;
+      border: 1px solid var(--border);
+    }
+    .m-stats-pills {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      font-weight: 800;
+    }
+    .m-day-log-bar {
+      min-height: 40px;
+      background: var(--row-even);
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      padding: 6px 10px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .m-undo-btn {
+      font-family: 'Cairo', sans-serif;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 8px;
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .m-btns-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .m-touch-btn {
+      font-family: 'Cairo', sans-serif;
+      padding: 8px 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--row-even);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      cursor: pointer;
+    }
+    .m-touch-btn .ico { font-size: 18px; }
+    .m-touch-btn.pos-t {
+      background: rgba(22, 163, 74, 0.08);
+      border-color: rgba(22, 163, 74, 0.3);
+      color: var(--pos);
+    }
+    .m-touch-btn.neg-t {
+      background: rgba(220, 38, 38, 0.08);
+      border-color: rgba(220, 38, 38, 0.3);
+      color: var(--neg);
+    }
+    .m-touch-btn:active { transform: scale(0.94); }
+
+    body.mobile-view .mobile-day-selector { display: flex; }
+    body.mobile-view .mobile-cards-container { display: flex; }
+    body.mobile-view .table-wrapper { display: none; }
+
+    @media (max-width: 768px) {
+      body { padding: 10px 10px 75px 10px; }
+      .hero-header { padding: 14px 16px; border-radius: 14px; }
+      .brand-text h1 { font-size: 16px; }
+      .brand-text .credits-sub { font-size: 11.5px; }
+      .dashboard-grid { grid-template-columns: 1fr; gap: 10px; }
+      .filter-tools { justify-content: stretch; }
+      .filter-tools input, .filter-tools select { flex: 1; min-width: 120px; }
+      .legend-bar { display: none; }
+      :root { --col-equal-width: 155px; }
+      .student-name { right: 36px; }
+      .sticky-index { width: 36px; min-width: 36px; max-width: 36px; }
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+    .modal-box {
+      background: var(--card);
+      color: var(--text);
+      padding: 24px;
+      border-radius: 20px;
+      max-width: 460px;
+      width: 92%;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      border: 2px solid var(--accent);
+    }
+    .roulette-name {
+      font-size: 24px;
+      font-weight: 800;
+      margin: 14px 0;
+      padding: 14px;
+      border-radius: 14px;
+      background: var(--row-even);
+      border: 2px dashed var(--accent);
+      color: var(--accent);
+    }
+    .footer-credit {
+      margin-top: 14px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- الهيدر الاحترافي -->
+  <div class="hero-header">
+    <div class="brand-box">
+      <div class="globe-badge">🌍</div>
+      <div class="brand-text">
+        <h1>منصة متابعة الصفية لمادة الجغرافية والتقنيات الحديثة بمدرسة السيد سلطان بن أحمد</h1>
+        <div class="credits-sub">
+          <span>💡 فكرة وتصميم أ. خالد البلوشي - معلم جغرافيا والتقنيات الحديثة — مدرسة السيد سلطان بن أحمد</span>
+          <a class="insta-pill" href="https://www.instagram.com/geowithkhalid3" target="_blank">📸 @geowithkhalid3</a>
+        </div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-roulette" onclick="openRoulette()">🎲 القرعة</button>
+      <button class="btn" style="background:linear-gradient(135deg, #8b5cf6, #6d28d9);color:#fff;" onclick="openWheel()">🎡 العجلة</button>
+      <button class="btn" style="background:linear-gradient(135deg, #059669, #047857);color:#fff;" onclick="openTimerModal()">⏱️ المؤقت</button>
+      <button class="btn" style="background:linear-gradient(135deg, #d97706, #b45309);color:#fff;" onclick="openAnalyticsModal()">📈 التقرير المرئي</button>
+      <label class="btn btn-upload" for="excelUpload">📂 استيراد</label>
+      <input type="file" id="excelUpload" accept=".xlsx,.xls,.csv" onchange="importExcel(event)" />
+      <button class="btn btn-export" onclick="exportToExcel()">📥 تصدير</button>
+      <button class="btn btn-glass" id="soundToggleBtn" onclick="toggleSound()">🔊</button>
+      <button class="btn btn-glass" onclick="toggleDarkMode()">🌙</button>
+    </div>
+  </div>
+
+  <!-- شريط التبديل الذكي بين وضع الهاتف ووضع الجدول الكامل -->
+  <div class="view-switcher-bar">
+    <div style="font-weight:800;font-size:13px;color:var(--text);">
+      📱 اختر نمط العرض المناسب لجهازك:
+    </div>
+    <div class="mode-toggle-group">
+      <button class="mode-btn" id="btnMobileMode" onclick="setViewMode('mobile')">📱 وضع الهاتف (بطاقات اليوم)</button>
+      <button class="mode-btn" id="btnTableMode" onclick="setViewMode('table')">🖥️ وضع السبورة (الجدول الكامل)</button>
+    </div>
+  </div>
+
+  <!-- شريط دليل السلوكيات -->
+  <div class="legend-bar">
+    <strong>الإيجابية:</strong>
+    <span class="legend-pill legend-pos">🙋‍♂️ التفاعل (+1)</span>
+    <span class="legend-pill legend-pos">🤝 تعاون (+1)</span>
+    <span class="legend-pill legend-pos">💡 إبداع (+2)</span>
+    <strong style="margin-right:6px;">السلبية:</strong>
+    <span class="legend-pill legend-neg">😴 نوم (-1)</span>
+    <span class="legend-pill legend-neg">⏰ التأخير (-1)</span>
+    <span class="legend-pill legend-neg">🚪 خروج بدون إذن (-1)</span>
+    <span class="legend-pill legend-neg">💬 الكلام (-1)</span>
+    <span class="legend-pill legend-neg">🎒 عدم إحضار أدوات (-1)</span>
+  </div>
+
+  <!-- لوحة الشرف + المؤشرات الإحصائية -->
+  <div class="dashboard-grid">
+    <div class="podium-card">
+      <div class="section-title">
+        <span>🏆 فرسان الجغرافيا هذا الأسبوع</span>
+        <span style="font-size:11px;color:var(--muted);">أعلى ٣ طلاب</span>
+      </div>
+      <div class="podium-list" id="podiumContainer"></div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="section-title">
+        <span>📊 إحصائيات الفصل</span>
+        <span id="classBadgeTitle" style="font-size:11.5px;color:var(--muted);"></span>
+      </div>
+      <div class="kpi-grid" id="kpiContainer"></div>
+    </div>
+  </div>
+
+  <!-- شريط الفصول وأدوات البحث والفلترة -->
+  <div class="toolbar">
+    <div class="tabs" id="classTabs"></div>
+    <div class="filter-tools">
+      <input type="text" id="searchInput" placeholder="🔍 ابحث عن طالب..." oninput="renderAll()" />
+      <select id="sortSelect" onchange="renderAll()">
+        <option value="default">الترتيب: الكشف الأصلي</option>
+        <option value="high">الأعلى نقاطاً أولاً 🌟</option>
+        <option value="low">الأقل نقاطاً (متابعة)</option>
+      </select>
+      <input type="text" id="newStudentName" placeholder="+ اسم طالب جديد..." onkeydown="if(event.key==='Enter') addStudent()" />
+      <button class="btn btn-export" onclick="addStudent()">إضافة</button>
+      <button class="btn" style="background:#64748b;color:#fff;" onclick="resetWeek()">🔄 تصفير</button>
+    </div>
+  </div>
+
+  <!-- أزرار اختيار اليوم (تظهر في وضع الهاتف) -->
+  <div class="mobile-day-selector" id="mobileDayTabs"></div>
+
+  <!-- ١. عرض الهاتف المخصص -->
+  <div class="mobile-cards-container" id="mobileCardsBody"></div>
+
+  <!-- ٢. عرض السبورة/الكمبيوتر -->
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th class="sticky-index">م</th>
+          <th class="student-name">اسم الطالب 📌</th>
+          <th class="day-header">الأحد</th>
+          <th class="day-header">الإثنين</th>
+          <th class="day-header">الثلاثاء</th>
+          <th class="day-header">الأربعاء</th>
+          <th class="day-header">الخميس</th>
+          <th class="stat-col">إيجابي</th>
+          <th class="stat-col">سلبي</th>
+          <th class="stat-col">الصافي</th>
+        </tr>
+      </thead>
+      <tbody id="studentsBody"></tbody>
+    </table>
+  </div>
+
+  <div class="footer-credit">
+    فكرة وتصميم أ. خالد البلوشي - معلم جغرافيا والتقنيات الحديثة - حسابي في إنستجرام: @geowithkhalid3
+  </div>
+
+  <!-- نافذة المؤقت الصفي -->
+  <div class="modal-overlay" id="timerModal">
+    <div class="modal-box">
+      <h3 style="margin:0;font-size:20px;color:var(--accent);">⏱️ المؤقت الصفي والعد التنازلي</h3>
+      <p style="color:var(--muted);font-size:13px;margin:4px 0 12px;">اختر المدة الزمنية لنشاط الحصة:</p>
+      <div style="display:flex;justify-content:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+        <button class="btn" style="background:var(--row-even);color:var(--text);border:1px solid var(--border);" onclick="setTimer(1)">1 دقيقة</button>
+        <button class="btn" style="background:var(--row-even);color:var(--text);border:1px solid var(--border);" onclick="setTimer(2)">2 دقيقة</button>
+        <button class="btn" style="background:var(--row-even);color:var(--text);border:1px solid var(--border);" onclick="setTimer(3)">3 دقائق</button>
+        <button class="btn" style="background:var(--row-even);color:var(--text);border:1px solid var(--border);" onclick="setTimer(4)">4 دقائق</button>
+        <button class="btn" style="background:var(--row-even);color:var(--text);border:1px solid var(--border);" onclick="setTimer(5)">5 دقائق</button>
+      </div>
+      <div id="timerDisplay" style="font-size:42px;font-weight:800;color:var(--accent);margin:15px 0;background:var(--row-even);padding:15px;border-radius:14px;border:2px dashed var(--accent);">03:00</div>
+      <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-upload" onclick="startTimer()">بدء المؤقت ▶</button>
+        <button class="btn btn-roulette" onclick="pauseTimer()">إيقاف مؤقت ⏸</button>
+        <button class="btn" style="background:#dc2626;color:#fff;" onclick="resetTimer()">إعادة ضبط ⏹</button>
+        <button class="btn" style="background:#64748b;color:#fff;" onclick="closeTimerModal()">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة العجلة الدوارة -->
+  <div class="modal-overlay" id="wheelModal">
+    <div class="modal-box">
+      <h3 style="margin:0;font-size:20px;color:var(--accent);">🎡 العجلة الدوارة لاختبار الطلاب</h3>
+      <p style="color:var(--muted);font-size:13px;margin:4px 0 12px;">تدوير العجلة لاختيار طالب عشوائياً بشكل تفاعلي</p>
+      <div class="roulette-name" id="wheelWinner" style="font-size:30px;color:#8b5cf6;">اضغط بدء التدوير 👇</div>
+      <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;">
+        <button class="btn" style="background:#8b5cf6;color:#fff;" onclick="spinWheel()">🎡 تدوير العجلة</button>
+        <button class="btn btn-upload" onclick="rewardWheelWinner()">🙋‍♂️ منحه نقطة تفاعل (+1)</button>
+        <button class="btn" style="background:#64748b;color:#fff;" onclick="closeWheel()">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة التقرير الأسبوعي المرئي -->
+  <div class="modal-overlay" id="analyticsModal">
+    <div class="modal-box" style="max-width:700px;text-align:right;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <h3 style="margin:0;font-size:20px;color:var(--accent);">📈 التقرير الأسبوعي المرئي ومقارنة أداء الفصول</h3>
+        <button class="btn" style="background:#64748b;color:#fff;padding:4px 10px;" onclick="closeAnalyticsModal()">✕</button>
+      </div>
+      <p style="color:var(--muted);font-size:13px;margin:0 0 16px;">ملخص مرئي شامل لمقارنة مستويات الانضباط والنقاط بين الفصول:</p>
+      <div id="analyticsContent" style="display:flex;flex-direction:column;gap:12px;max-height:60vh;overflow-y:auto;padding-left:4px;"></div>
+      <div style="margin-top:16px;text-align:center;">
+        <button class="btn btn-export" onclick="exportToExcel()">📥 تصدير التقرير الكامل Excel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة القرعة العشوائية -->
+  <div class="modal-overlay" id="rouletteModal">
+    <div class="modal-box">
+      <h3 style="margin:0;font-size:19px;">🎲 قرعة فرسان الجغرافيا العشوائية</h3>
+      <p style="color:var(--muted);font-size:12.5px;margin:4px 0 0;">اختيار طالب عشوائياً للتفاعل والمشاركة</p>
+      <div class="roulette-name" id="rouletteWinner">...</div>
+      <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-roulette" onclick="spinRoulette()">🔄 سحب اسم آخر</button>
+        <button class="btn btn-upload" onclick="rewardRouletteWinner()">🙋‍♂️ منحه نقطة تفاعل (+1)</button>
+        <button class="btn" style="background:#64748b;color:#fff;" onclick="closeRoulette()">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const days = ['sun', 'mon', 'tue', 'wed', 'thu'];
+    const daysLabels = { sun: 'الأحد', mon: 'الإثنين', tue: 'الثلاثاء', wed: 'الأربعاء', thu: 'الخميس' };
+
+    const posIcons = [
+      { icon: '🙋‍♂️', label: 'التفاعل', short: 'تفاعل', val: 1 },
+      { icon: '🤝', label: 'تعاون', short: 'تعاون', val: 1 },
+      { icon: '💡', label: 'إبداع', short: 'إبداع', val: 2 }
+    ];
+    const negIcons = [
+      { icon: '😴', label: 'نوم', short: 'نوم', val: -1 },
+      { icon: '⏰', label: 'التأخير', short: 'تأخير', val: -1 },
+      { icon: '🚪', label: 'خروج بدون إذن', short: 'خروج', val: -1 },
+      { icon: '💬', label: 'الكلام', short: 'كلام', val: -1 },
+      { icon: '🎒', label: 'عدم إحضار أدوات', short: 'أدوات', val: -1 }
+    ];
+
+    const defaultData = {
+      'الفصل 1': ['أحمد محمد العلي', 'سالم علي الحارثي', 'خالد عبدالله البلوشي', 'يوسف سعيد المعولي', 'سلطان ناصر الهنائي', 'عمران فهد الرواحي'],
+      'الفصل 2': ['عمر حسن الشكيلي', 'زياد طارق المعمري', 'فهد ناصر البوسعيدي', 'ماجد سلطان الحبسي', 'تميم خلفان البطاشي', 'أيهم سالم الفارسي'],
+      'الفصل 3': ['ريان فيصل الوهيبي', 'بدر وليد المسكري', 'حمد راشد السعدي', 'طلال سامي الحوسني', 'معاذ يحيى القاسمي', 'الوليد خالد الشنفري'],
+      'الفصل 4': ['أنس كريم الريامي', 'مهند عادل الهاشمي', 'سيف مازن اليحمدي', 'نواف جاسم العريمي', 'ملهم زاهر المحروقي', 'فارس هيثم الصبحي']
+    };
+
+    let state = JSON.parse(localStorage.getItem('behaviorDashboardV3')) || initDefaultState();
+    let currentClass = Object.keys(state)[0];
+    const todayIndex = Math.min(Math.max(new Date().getDay(), 0), 4);
+    let currentMobileDay = days[todayIndex] || 'sun';
+    let soundEnabled = true;
+    let selectedWinnerIdx = null;
+    let currentViewMode = window.innerWidth <= 768 ? 'mobile' : 'table';
+
+    function playTone(type) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        if (type === 'pos') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(783.99, ctx.currentTime + 0.18);
+          gain.gain.setValueAtTime(0.18, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.25);
+        } else if (type === 'neg') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(240, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.22);
+          gain.gain.setValueAtTime(0.18, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.25);
+        }
+      } catch (e) {}
+    }
+
+    function createEmptyLogs() { return { sun: [], mon: [], tue: [], wed: [], thu: [] }; }
+    function initDefaultState() {
+      const obj = {};
+      for (const [cls, names] of Object.entries(defaultData)) {
+        obj[cls] = names.map(name => ({ name, logs: createEmptyLogs() }));
+      }
+      return obj;
+    }
+    function saveState() { localStorage.setItem('behaviorDashboardV3', JSON.stringify(state)); }
+
+    function setViewMode(mode) {
+      currentViewMode = mode;
+      if (mode === 'mobile') {
+        document.body.classList.add('mobile-view');
+        document.getElementById('btnMobileMode').classList.add('active');
+        document.getElementById('btnTableMode').classList.remove('active');
+      } else {
+        document.body.classList.remove('mobile-view');
+        document.getElementById('btnTableMode').classList.add('active');
+        document.getElementById('btnMobileMode').classList.remove('active');
+      }
+      renderAll();
+    }
+
+    function getGeoRank(net) {
+      if (net >= 5) return { text: '🧭 ملّاح خبير', cls: 'rank-gold' };
+      if (net >= 2) return { text: '🗺️ مستكشف متميز', cls: 'rank-silver' };
+      return null;
+    }
+
+    function calculateStudentStats(student) {
+      let pos = 0, neg = 0;
+      days.forEach(d => {
+        student.logs[d].forEach(item => {
+          if (item.val > 0) pos += item.val;
+          else neg += Math.abs(item.val);
+        });
+      });
+      return { pos, neg, net: pos - neg };
+    }
+
+    function renderTabs() {
+      const container = document.getElementById('classTabs');
+      container.innerHTML = '';
+      Object.keys(state).forEach(cls => {
+        const btn = document.createElement('button');
+        btn.className = 'tab-btn' + (cls === currentClass ? ' active' : '');
+        btn.textContent = `${cls} (${state[cls].length})`;
+        btn.onclick = () => { currentClass = cls; renderTabs(); renderAll(); };
+        container.appendChild(btn);
+      });
+
+      const dayContainer = document.getElementById('mobileDayTabs');
+      dayContainer.innerHTML = '';
+      days.forEach(d => {
+        const dBtn = document.createElement('button');
+        dBtn.className = 'day-tab-btn' + (d === currentMobileDay ? ' active' : '');
+        dBtn.textContent = `📅 ${daysLabels[d]}`;
+        dBtn.onclick = () => { currentMobileDay = d; renderTabs(); renderAll(); };
+        dayContainer.appendChild(dBtn);
+      });
+    }
+
+    function addBehavior(studentIdx, day, icon, label, val) {
+      state[currentClass][studentIdx].logs[day].push({ icon, label, val });
+      playTone(val > 0 ? 'pos' : 'neg');
+      const stStats = calculateStudentStats(state[currentClass][studentIdx]);
+      if (val > 0 && (val === 2 || stStats.net === 5) && typeof confetti === 'function') {
+        confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+      }
+      saveState();
+      renderAll();
+    }
+
+    function clearLastBehavior(studentIdx, day) {
+      state[currentClass][studentIdx].logs[day].pop();
+      saveState();
+      renderAll();
+    }
+
+    function removeStudent(studentIdx) {
+      const st = state[currentClass][studentIdx];
+      if (!confirm(`هل تريد حذف الطالب "${st.name}" من القائمة؟`)) return;
+      state[currentClass].splice(studentIdx, 1);
+      saveState();
+      renderTabs();
+      renderAll();
+    }
+
+    function renderPodiumAndKPI(studentsWithStats, classPos, classNeg) {
+      const sorted = [...studentsWithStats].sort((a, b) => b.stats.net - a.stats.net).slice(0, 3);
+      const medals = ['🥇', '🥈', '🥉'];
+      const podiumEl = document.getElementById('podiumContainer');
+      podiumEl.innerHTML = sorted.map((item, i) => `
+        <div class="podium-item">
+          <span class="podium-rank">${medals[i]}</span>
+          <div class="podium-name">${item.student.name}</div>
+          <div class="podium-score">${item.stats.net > 0 ? '+' + item.stats.net : item.stats.net} نقطة</div>
+          <button class="cert-mini-btn" onclick="printCertificate(${item.originalIdx})">🏅 شهادة</button>
+        </div>
+      `).join('');
+
+      const totalActions = classPos + classNeg;
+      const posRate = totalActions > 0 ? Math.round((classPos / totalActions) * 100) : 100;
+
+      document.getElementById('classBadgeTitle').textContent = currentClass;
+      document.getElementById('kpiContainer').innerHTML = `
+        <div class="kpi-box"><span class="val" style="color:var(--pos)">+${classPos}</span><span class="lbl">الإيجابي</span></div>
+        <div class="kpi-box"><span class="val" style="color:var(--neg)">-${classNeg}</span><span class="lbl">السلبي</span></div>
+        <div class="kpi-box"><span class="val" style="color:var(--accent)">${posRate}%</span><span class="lbl">الانضباط</span></div>
+      `;
+    }
+
+    function renderAll() {
+      const tbody = document.getElementById('studentsBody');
+      const mobileContainer = document.getElementById('mobileCardsBody');
+      tbody.innerHTML = '';
+      mobileContainer.innerHTML = '';
+
+      const query = (document.getElementById('searchInput').value || '').trim();
+      const sortMode = document.getElementById('sortSelect').value;
+
+      let classPos = 0, classNeg = 0;
+      const mapped = state[currentClass].map((student, sIdx) => {
+        const stats = calculateStudentStats(student);
+        classPos += stats.pos;
+        classNeg += stats.neg;
+        return { student, originalIdx: sIdx, stats };
+      });
+
+      renderPodiumAndKPI(mapped, classPos, classNeg);
+
+      let filtered = mapped.filter(item => item.student.name.includes(query));
+      if (sortMode === 'high') filtered.sort((a, b) => b.stats.net - a.stats.net);
+      else if (sortMode === 'low') filtered.sort((a, b) => a.stats.net - b.stats.net);
+
+      filtered.forEach((item, displayIdx) => {
+        const { student, originalIdx, stats } = item;
+        const badgeClass = stats.net > 0 ? 'score-pos' : (stats.net < 0 ? 'score-neg' : 'score-zero');
+        const rankObj = getGeoRank(stats.net);
+        const rankBadgeHtml = rankObj ? `<span class="rank-tag ${rankObj.cls}">${rankObj.text}</span>` : '';
+
+        // عرض السبورة
+        const tr = document.createElement('tr');
+        let rowHtml = `
+          <td class="sticky-index">${displayIdx + 1}</td>
+          <td class="student-name">
+            <div class="student-name-wrapper">
+              <div class="student-top-line">
+                <span class="student-title">${student.name}</span>
+                <span class="row-actions">
+                  <button class="icon-btn" title="شهادة تقدير" onclick="printCertificate(${originalIdx})">🏅</button>
+                  <button class="icon-btn" title="حذف الطالب" onclick="removeStudent(${originalIdx})">✖</button>
+                </span>
+              </div>
+              ${rankBadgeHtml}
+            </div>
+          </td>
+        `;
+
+        days.forEach(day => {
+          const chipsHtml = student.logs[day].map(lg => `<span class="log-chip ${lg.val > 0 ? 'pos' : 'neg'}">${lg.icon} ${lg.label || ''}</span>`).join('');
+          rowHtml += `
+            <td class="day-cell">
+              <div class="icons-log" title="انقر مرتين لحذف آخر سلوك" ondblclick="clearLastBehavior(${originalIdx}, '${day}')">
+                ${chipsHtml || '<span style="color:var(--muted);font-size:12px;">—</span>'}
+              </div>
+              <div class="action-btns">
+                ${posIcons.map(ic => `<button class="beh-btn pos-b" onclick="addBehavior(\${originalIdx}, '${day}', '${ic.icon}', '${ic.short}',${ic.val})">${ic.icon}${ic.short}</button>`).join('')}
+                ${negIcons.map(ic => `<button class="beh-btn neg-b" onclick="addBehavior(\${originalIdx}, '${day}', '${ic.icon}', '${ic.short}',${ic.val})">${ic.icon}${ic.short}</button>`).join('')}
+              </div>
+            </td>
+          `;
+        });
+
+        rowHtml += `
+          <td class="stat-col" style="color:var(--pos);font-weight:bold;">+${stats.pos}</td>
+          <td class="stat-col" style="color:var(--neg);font-weight:bold;">-${stats.neg}</td>
+          <td class="stat-col"><span class="score-badge ${badgeClass}">${stats.net > 0 ? '+' + stats.net : stats.net}</span></td>
+        `;
+        tr.innerHTML = rowHtml;
+        tbody.appendChild(tr);
+
+        // عرض الهاتف
+        const mCard = document.createElement('div');
+        mCard.className = 'm-student-card';
+        const dayLogs = student.logs[currentMobileDay] || [];
+        const mChipsHtml = dayLogs.map(lg => `<span class="log-chip ${lg.val > 0 ? 'pos' : 'neg'}">${lg.icon} ${lg.label || ''}</span>`).join('');
+
+        mCard.innerHTML = `
+          <div class="m-card-header">
+            <div class="m-name-box">
+              <span class="m-num">${displayIdx + 1}</span>
+              <div><div>${student.name}</div>${rankBadgeHtml}</div>
+            </div>
+            <div class="m-stats-pills">
+              <span style="color:var(--pos)">+${stats.pos}</span>
+              <span style="color:var(--neg)">-${stats.neg}</span>
+              <span class="score-badge ${badgeClass}">${stats.net > 0 ? '+' + stats.net : stats.net}</span>
+              <button class="icon-btn" onclick="printCertificate(${originalIdx})">🏅</button>
+              <button class="icon-btn" onclick="removeStudent(${originalIdx})">✖</button>
+            </div>
+          </div>
+          <div class="m-day-log-bar">
+            <div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center;">
+              <strong style="font-size:11.5px;color:var(--muted);margin-left:4px;">${daysLabels[currentMobileDay]}:</strong>
+              ${mChipsHtml || '<span style="color:var(--muted);font-size:12px;">لا توجد سلوكيات مسجلة اليوم</span>'}
+            </div>
+            ${dayLogs.length > 0 ? `<button class="m-undo-btn" onclick="clearLastBehavior(${originalIdx}, '${currentMobileDay}')">↩️ تراجع</button>` : ''}
+          </div>
+          <div class="m-btns-grid">
+            ${posIcons.map(ic => `<button class="m-touch-btn pos-t" onclick="addBehavior(\${originalIdx}, '${currentMobileDay}', '${ic.icon}', '${ic.short}',${ic.val})"><span class="ico">\${ic.icon}</span><span>${ic.short} (+${ic.val})</span></button>`).join('')}
+            ${negIcons.map(ic => `<button class="m-touch-btn neg-t" onclick="addBehavior(\${originalIdx}, '${currentMobileDay}', '${ic.icon}', '${ic.short}',${ic.val})"><span class="ico">\${ic.icon}</span><span>${ic.short} (${ic.val})</span></button>`).join('')}
+          </div>
+        `;
+        mobileContainer.appendChild(mCard);
+      });
+    }
+
+    function addStudent() {
+      const input = document.getElementById('newStudentName');
+      const name = input.value.trim();
+      if (!name) return;
+      state[currentClass].push({ name, logs: createEmptyLogs() });
+      input.value = '';
+      saveState();
+      renderTabs();
+      renderAll();
+    }
+
+    function resetWeek() {
+      if (!confirm('هل تريد مسح نقاط الأسبوع الحالي لهذا الفصل؟')) return;
+      state[currentClass].forEach(st => { st.logs = createEmptyLogs(); });
+      saveState();
+      renderAll();
+    }
+
+    function openRoulette() {
+      document.getElementById('rouletteModal').style.display = 'flex';
+      spinRoulette();
+    }
+    function closeRoulette() { document.getElementById('rouletteModal').style.display = 'none'; }
+    function spinRoulette() {
+      const list = state[currentClass];
+      if (!list || list.length === 0) return;
+      const box = document.getElementById('rouletteWinner');
+      let count = 0;
+      const interval = setInterval(() => {
+        const randIdx = Math.floor(Math.random() * list.length);
+        box.textContent = list[randIdx].name;
+        count++;
+        if (count > 14) {
+          clearInterval(interval);
+          selectedWinnerIdx = randIdx;
+          playTone('pos');
+          if (typeof confetti === 'function') confetti({ particleCount: 40, spread: 50 });
+        }
+      }, 65);
+    }
+    function rewardRouletteWinner() {
+      if (selectedWinnerIdx === null) return;
+      addBehavior(selectedWinnerIdx, currentMobileDay, '🙋‍♂️', 'تفاعل', 1);
+      closeRoulette();
+    }
+
+    function printCertificate(studentIdx) {
+      const st = state[currentClass][studentIdx];
+      const stats = calculateStudentStats(st);
+      const win = window.open('', '_blank', 'width=850,height=620');
+      win.document.write(`
+        <!DOCTYPE html>
+        <html lang="ar" dir="rtl">
+        <head>
+          <meta charset="UTF-8">
+          <title>شهادة تقدير - ${st.name}</title>
+          <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800&display=swap" rel="stylesheet">
+          <style>
+            body { font-family: 'Cairo', sans-serif; background: #f8fafc; padding: 20px; text-align: center; }
+            .cert { border: 8px double #1e3a8a; background: linear-gradient(135deg, #ffffff 0%, #fefce8 100%); padding: 30px 20px; border-radius: 20px; max-width: 750px; margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+            h1 { color: #1e3a8a; font-size: 26px; margin: 10px 0; }
+            h2 { color: #d97706; font-size: 24px; margin: 12px 0; }
+            p { font-size: 16px; color: #334155; line-height: 1.8; }
+            .footer { display: flex; flex-wrap: wrap; justify-content: space-around; gap: 10px; margin-top: 25px; font-weight: bold; color: #0f172a; }
+            @media print { .no-print { display: none; } body { background: #fff; padding: 0; } }
+          </style>
+        </head>
+        <body>
+          <div class="cert">
+            <div style="font-size:42px;">🌍 🏆 ⭐</div>
+            <h1>شهادة شكر وتقدير في مادة الجغرافيا والتقنيات الحديثة</h1>
+            <p>يسر معلم المادة بـ <strong>مدرسة السيد سلطان بن أحمد</strong> أن يمنح هذه الشهادة للطالب المتميز:</p>
+            <h2>${st.name} (${currentClass})</h2>
+            <p>تقديراً لانضباطه السلوكي وتفاعله المميز وحصوله على صافي نقاط (<strong>+${stats.net}</strong>).</p>
+            <div class="footer">
+              <div>فكرة وتصميم أ. خالد البلوشي - معلم جغرافيا والتقنيات الحديثة</div>
+              <div>حسابي في إنستجرام: @geowithkhalid3</div>
+            </div>
+          </div>
+          <div class="no-print" style="margin-top:20px;">
+            <button onclick="window.print()" style="padding:10px 24px;font-size:15px;font-family:Cairo;font-weight:bold;background:#1e3a8a;color:#fff;border:none;border-radius:8px;cursor:pointer;">🖨️ طباعة الشهادة / حفظ PDF</button>
+          </div>
+        </body>
+        </html>
+      `);
+      win.document.close();
+    }
+
+    function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundToggleBtn').textContent = soundEnabled ? '🔊' : '🔇';
+    }
+
+    function importExcel(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const classSheets = workbook.SheetNames.filter(name => !name.includes('ملخص') && !name.includes('دليل'));
+        const targetSheets = classSheets.length > 0 ? classSheets.slice(0, 4) : workbook.SheetNames.slice(0, 4);
+
+        const newState = {};
+        targetSheets.forEach((sheetName, idx) => {
+          const ws = workbook.Sheets[sheetName];
+          const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
+          const studentsList = [];
+          rows.forEach(row => {
+            if (!row || row.length === 0) return;
+            let candidate = String(row[1] || row[0] || "").trim();
+            if (candidate && candidate !== "اسم الطالب" && candidate !== "م" && !candidate.includes("سجل المتابعة") && !candidate.includes("خالد البلوشي") && isNaN(candidate)) {
+              studentsList.push({ name: candidate, logs: createEmptyLogs() });
+            }
+          });
+          const tabTitle = sheetName.trim() || `الفصل ${idx + 1}`;
+          if (studentsList.length > 0) newState[tabTitle] = studentsList;
+        });
+
+        if (Object.keys(newState).length > 0) {
+          state = newState;
+          currentClass = Object.keys(state)[0];
+          saveState();
+          renderTabs();
+          renderAll();
+          alert('✅ تم استيراد قوائم الفصول والطلاب من ملف الإكسل بنجاح!');
+        } else {
+          alert('⚠️ لم يتم العثور على أسماء طلاب صالحة في الملف.');
+        }
+        event.target.value = '';
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function exportToExcel() {
+      const wb = XLSX.utils.book_new();
+      for (const [clsName, students] of Object.entries(state)) {
+        const sheetRows = [
+          [`سجل المتابعة الأسبوعي للسلوك - ${clsName}`],
+          ["فكرة وتصميم أ. خالد البلوشي - معلم جغرافيا والتقنيات الحديثة - حسابي في إنستجرام: @geowithkhalid3"],
+          [],
+          ["م", "اسم الطالب", "الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "مجموع الإيجابي", "مجموع السلبي", "صافي النقاط"]
+        ];
+        students.forEach((st, idx) => {
+          const stStats = calculateStudentStats(st);
+          sheetRows.push([
+            idx + 1, st.name,
+            st.logs.sun.map(i => `${i.icon} ${i.label || ''}`).join(' | '),
+            st.logs.mon.map(i => `${i.icon} ${i.label || ''}`).join(' | '),
+            st.logs.tue.map(i => `${i.icon} ${i.label || ''}`).join(' | '),
+            st.logs.wed.map(i => `${i.icon} ${i.label || ''}`).join(' | '),
+            st.logs.thu.map(i => `${i.icon} ${i.label || ''}`).join(' | '),
+            stStats.pos, stStats.neg, stStats.net
+          ]);
+        });
+        const ws = XLSX.utils.aoa_to_sheet(sheetRows);
+        ws['!views'] = [{ rightToLeft: true, state: 'frozen', xSplit: 2, ySplit: 4 }];
+        ws['!cols'] = [{ wch: 6 }, { wch: 24 }, { wch: 24 }, { wch: 24 }, { wch: 24 }, { wch: 24 }, { wch: 24 }, { wch: 14 }, { wch: 14 }, { wch: 14 }];
+        XLSX.utils.book_append_sheet(wb, ws, clsName.substring(0, 31));
+      }
+      XLSX.writeFile(wb, "تقرير_سلوك_الطلاب_أ_خالد_البلوشي.xlsx");
+    }
+
+    // المؤقت الصفي
+    let timerInterval = null, totalSeconds = 180, remainingSeconds = 180, timerRunning = false;
+    function openTimerModal() { document.getElementById('timerModal').style.display = 'flex'; updateTimerDisplay(); }
+    function closeTimerModal() { document.getElementById('timerModal').style.display = 'none'; pauseTimer(); }
+    function setTimer(mins) { pauseTimer(); totalSeconds = mins * 60; remainingSeconds = totalSeconds; updateTimerDisplay(); }
+    function updateTimerDisplay() {
+      const m = Math.floor(remainingSeconds / 60), s = remainingSeconds % 60;
+      document.getElementById('timerDisplay').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+    function startTimer() {
+      if (timerRunning) return;
+      if (remainingSeconds <= 0) remainingSeconds = totalSeconds;
+      timerRunning = true;
+      timerInterval = setInterval(() => {
+        if (remainingSeconds > 0) {
+          remainingSeconds--;
+          updateTimerDisplay();
+          if (remainingSeconds === 0) {
+            pauseTimer();
+            playTone('pos');
+            if (typeof confetti === 'function') confetti({ particleCount: 100, spread: 80 });
+            alert('⏰ انتهى الوقت المخصص للنشاط الصفي!');
+          }
+        }
+      }, 1000);
+    }
+    function pauseTimer() { timerRunning = false; clearInterval(timerInterval); }
+    function resetTimer() { pauseTimer(); remainingSeconds = totalSeconds; updateTimerDisplay(); }
+
+    // العجلة الدوارة
+    let wheelWinnerIdx = null;
+    function openWheel() { document.getElementById('wheelModal').style.display = 'flex'; spinWheel(); }
+    function closeWheel() { document.getElementById('wheelModal').style.display = 'none'; }
+    function spinWheel() {
+      const list = state[currentClass];
+      if (!list || list.length === 0) return;
+      const box = document.getElementById('wheelWinner');
+      let count = 0;
+      const interval = setInterval(() => {
+        const randIdx = Math.floor(Math.random() * list.length);
+        box.textContent = '🎡 ' + list[randIdx].name;
+        count++;
+        if (count > 16) {
+          clearInterval(interval);
+          wheelWinnerIdx = randIdx;
+          playTone('pos');
+          if (typeof confetti === 'function') confetti({ particleCount: 50, spread: 70 });
+        }
+      }, 55);
+    }
+    function rewardWheelWinner() {
+      if (wheelWinnerIdx === null) return;
+      addBehavior(wheelWinnerIdx, currentMobileDay, '🙋‍♂️', 'تفاعل', 1);
+      closeWheel();
+    }
+
+    // التقرير المرئي
+    function openAnalyticsModal() { document.getElementById('analyticsModal').style.display = 'flex'; renderAnalyticsContent(); }
+    function closeAnalyticsModal() { document.getElementById('analyticsModal').style.display = 'none'; }
+    function renderAnalyticsContent() {
+      const container = document.getElementById('analyticsContent');
+      let html = '', maxNet = 1, classSummaries = [];
+      Object.keys(state).forEach(cName => {
+        let cPos = 0, cNeg = 0, cCount = state[cName].length;
+        state[cName].forEach(st => {
+          const stStats = calculateStudentStats(st);
+          cPos += stStats.pos; cNeg += stStats.neg;
+        });
+        const cNet = cPos - cNeg;
+        if (Math.abs(cNet) > maxNet) maxNet = Math.abs(cNet);
+        classSummaries.push({ cName, cPos, cNeg, cNet, cCount });
+      });
+
+      classSummaries.forEach(item => {
+        const posPercent = Math.min(Math.round((item.cPos / (item.cPos + item.cNeg || 1)) * 100), 100);
+        const barWidth = Math.max(Math.round((Math.max(item.cNet, 0) / maxNet) * 100), 8);
+        const statusBadge = item.cNet >= 10 ? '🌟 متميز جداً' : (item.cNet >= 0 ? '✅ مستقر' : '⚠️ يحتاج متابعة');
+
+        html += `
+          <div style="background:var(--row-even);border:1px solid var(--border);border-radius:12px;padding:12px 16px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+              <strong style="font-size:15px;color:var(--accent);">${item.cName} (${item.cCount} طلاب)</strong>
+              <span style="font-size:12.5px;font-weight:700;">الحالة: ${statusBadge}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:6px;">
+              <span>إيجابي: <strong style="color:var(--pos)">+${item.cPos}</strong></span>
+              <span>سلبي: <strong style="color:var(--neg)">-${item.cNeg}</strong></span>
+              <span>الصافي: <strong style="color:var(--text)">${item.cNet > 0 ? '+' + item.cNet : item.cNet}</strong></span>
+              <span>نسبة الانضباط: <strong style="color:var(--accent)">${posPercent}%</strong></span>
+            </div>
+            <div style="background:var(--border);border-radius:6px;height:12px;overflow:hidden;width:100%;">
+              <div style="background:linear-gradient(90deg, #10b981, #0284c7);height:100%;width:${barWidth}%;border-radius:6px;transition:width 0.5s;"></div>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    renderTabs();
+    setViewMode(currentViewMode);
+  </script>
+</body>
+</html>
